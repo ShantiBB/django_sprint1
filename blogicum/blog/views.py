@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 
 posts = [
@@ -42,6 +43,7 @@ posts = [
                 укутывал их, чтобы не испортились от дождя.''',
     },
 ]
+posts_id = {post['id']: post for post in posts}
 
 
 def index(request):
@@ -51,9 +53,12 @@ def index(request):
 
 
 def post_detail(request, id):
-    template = 'blog/detail.html'
-    context = {'post': posts[id]}
-    return render(request, template, context)
+    try:
+        template = 'blog/detail.html'
+        context = {'post': posts_id[id]}
+        return render(request, template, context)
+    except KeyError:
+        return HttpResponse(status=404)
 
 
 def category_posts(request, category_slug):
